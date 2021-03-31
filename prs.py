@@ -1,7 +1,6 @@
 # pseudo-random susbtitution
 import numpy as np
 from copy import copy
-from pprint import pprint
 from random import shuffle
 
 prs_table = [
