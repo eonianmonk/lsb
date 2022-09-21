@@ -1,10 +1,43 @@
 import argparse
 import numpy as np
+import pyperclip as pyclip
 from codecs import encode, decode
 from lib import *
 from prs import *
 from PIL import Image
 
+def manage_file(filename, row_data: bytearray, mode, encoding):
+    """
+    reads file/writes to file. Returns nothing or data depending on situation
+    
+    filename - if %CLIP% writes to clipboard, otherwise requires filename
+    row_data - data to be written to the file, empty on r mode 
+    modes    - 'r' read, returns data from file, 
+               'w' write, returns nothing
+    encoding - encoding
+    """
+    if filename != "%CLIP%":
+        match mode:
+            case 'r':
+                pure_data = bytearray()
+                with open(data_src, 'r', encoding = encoding) as raw_data:
+                    for line in raw_data.readlines():
+                        pure_data += bytearray(encode(line, encoding))
+                return pure_data
+            case 'w':
+                with open(data_dest, 'w+', encoding=encoding) as dfile:
+                    dfile.write(decode(row_data, encoding))
+            case _: 
+                raise ValueError
+    else:
+        match mode:
+            case 'r':
+                return encode(pyclip.paste(),encoding)
+            case 'w':
+                pyclip.copy(decode(row_data,encoding))
+            case _:
+                raise ValueError
+    
 def extract(image_name, data_dest, verbose=False, encoding=None, prs=False):
     if encoding is None:
         encoding='utf8'
@@ -19,8 +52,10 @@ def extract(image_name, data_dest, verbose=False, encoding=None, prs=False):
         prs_table = np.transpose(prs_table)
         dump = join_bytearray(dump, prs_table)
     
-    with open(data_dest, 'w+', encoding=encoding) as dfile:
-        dfile.write(decode(dump, encoding))
+    # with open(data_dest, 'w+', encoding=encoding) as dfile:
+        # dfile.write(decode(dump, encoding))
+   
+    manage_file(data_dest, dump, 'w', encoding)
     
     if verbose:
         print("Extracting completed.")
@@ -36,10 +71,11 @@ def hide(image_name, data_src, verbose=False, encoding=None, output_image_name=N
         pix = np.array(img)
     
     #read data
-    pure_data = bytearray()
-    with open("data.txt", 'r', encoding = encoding) as raw_data:
-        for line in raw_data.readlines():
-            pure_data += bytearray(encode(line, encoding))
+    # pure_data = bytearray()
+    # with open(data_src, 'r', encoding = encoding) as raw_data:
+        # for line in raw_data.readlines():
+            # pure_data += bytearray(encode(line, encoding))
+    pure_data = manage_file(data_src, "", 'r',encoding)
     
     if prs:
         pure_data = join_bytearray(pure_data, prs_table)
@@ -69,7 +105,7 @@ def main():
     modes_group.add_argument("-de", help="decode mode", action="store_true")
     # files
     parser.add_argument('-s', help="source image", required=True)
-    parser.add_argument('-d', help="data file for encoding/decoding I/O", required=True)
+    parser.add_argument('-d', help="data file for message encoding/decoding I/O. Use %CLIP% to use data from clipboard/copy to clipboard", required=True)
     parser.add_argument('-o', help="output file(for images with message). If not mentioned, stored in (soure image name)_stenographed")
     #verbose
     parser.add_argument('-v', help="verbose", action="store_true")
