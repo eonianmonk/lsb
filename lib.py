@@ -15,7 +15,7 @@ def LSB_inject_to_R(src : np.array, data : bytearray, verbose : bool = False):
     if len(src[0][0]) != 3:
         raise TypeError('passed src array data is not pixels')
     if(len(src)*len(src[1]) < len(data)*8):
-        raise ValueError("Image is too small to hide data")
+        raise ValueError("Image is too small to hide data") 
     
     if data[-1] != 1:
         data.append(1)

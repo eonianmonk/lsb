@@ -17,19 +17,17 @@ prs_table = [
 Highest digit is on the highest index for easy work with matrixes
 '''
 
-'''
-[[0, 0, 0, 0, 0, 1, 0, 0],    [8
- [0, 0, 1, 0, 0, 0, 0, 0],     32
- [0, 0, 0, 0, 0, 0, 1, 0],     2
- [1, 0, 0, 0, 0, 0, 0, 0],     64
- [0, 0, 0, 0, 0, 0, 0, 1], ->  128
- [0, 1, 0, 0, 0, 0, 0, 0],     1
- [0, 0, 0, 1, 0, 0, 0, 0],     4
- [0, 0, 0, 0, 1, 0, 0, 0]]     16]
-'''
 def matrix_to_mask(p):
     '''
     transforms logical matrix to array of single-bit(!) integers
+    [[0, 0, 0, 0, 0, 1, 0, 0],    [8
+     [0, 0, 1, 0, 0, 0, 0, 0],     32
+     [0, 0, 0, 0, 0, 0, 1, 0],     2
+     [1, 0, 0, 0, 0, 0, 0, 0],     64
+     [0, 0, 0, 0, 0, 0, 0, 1], ->  128
+     [0, 1, 0, 0, 0, 0, 0, 0],     1
+     [0, 0, 0, 1, 0, 0, 0, 0],     4
+     [0, 0, 0, 0, 1, 0, 0, 0]]     16]
     
     p - logical matrix
     '''
@@ -39,12 +37,10 @@ def matrix_to_mask(p):
         res.append(array_to_integer(i))
     return res
 
-'''
-[0,0,0,0,0,1,1,1] -> 7
-'''
 def array_to_integer(arr, b=False):
     '''
     converts array of bits to an integer
+    [0,0,0,0,0,1,1,1] -> 7
     
     arr - array of bits
     '''
@@ -54,13 +50,11 @@ def array_to_integer(arr, b=False):
         return np.packbits(arr, bitorder='little')[0]
         
 
-'''
-71, [4, 32, 2, 128, 1, 64, 16, 8] -> 172
-0b01000111, [0b100, 0b100000, 0b10, 0b10000000, 0b1, 0b1000000, 0b10000, 0b1000] -> 0b10101100
-'''
 def join(arr, matr):
     '''
     sums an integer with aray of integers (matrix conjunction)
+    71, [4, 32, 2, 128, 1, 64, 16, 8] -> 172
+    0b01000111, [0b100, 0b100000, 0b10, 0b10000000, 0b1, 0b1000000, 0b10000, 0b1000] -> 0b10101100
     
     arr - integer
     matr - logical matrix(array of integers)
